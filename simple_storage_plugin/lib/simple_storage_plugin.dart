@@ -1,10 +1,84 @@
 
 import 'dart:async';
-
 import 'package:flutter/services.dart';
+import 'package:simple_signing_plugin/simple_signing_plugin.dart';
 
 class SimpleStoragePlugin {
   static const MethodChannel _channel = MethodChannel('simple_storage_plugin');
+
+  static Future<bool> writeData(String key, String data) async{
+    bool isDeviceSecure = await SimpleSigningPlugin.checkIfDeviceSecure();
+    if(isDeviceSecure){
+      try{
+        String signedData = await SimpleSigningPlugin.signData(data);
+        var result = await _channel.invokeMethod('writeData', {'key':key, 'data': signedData});
+        if(result == true){
+          return true;
+        }else{
+          return false;
+        }
+      }on PlatformException{
+        return false;
+      }
+    }
+    return false;
+  }
+
+  static Future<dynamic> readData(String key) async{
+    bool isDeviceSecure = await SimpleSigningPlugin.checkIfDeviceSecure();
+    if(isDeviceSecure){
+      try{
+        var data = await _channel.invokeMethod('readData', {'key':key});
+        if(data != false){
+          bool isValid = await SimpleSigningPlugin.verifyData(data);
+          if(isValid){
+            return data.toString().substring(data.toString().indexOf(':')+1, data.toString().length);
+          }
+          return false;
+        }else{
+          return false;
+        }
+      }on PlatformException {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  static Future<bool> deleteData(String key) async{
+    bool isDeviceSecure = await SimpleSigningPlugin.checkIfDeviceSecure();
+    if(isDeviceSecure){
+      try{
+        var result = await _channel.invokeMethod('deleteData', {'key':key});
+        if(result != false){
+          return true;
+        }else{
+          return false;
+        }
+      }on PlatformException {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  static Future<bool> editData(String key, String data) async{
+    bool isDeviceSecure = await SimpleSigningPlugin.checkIfDeviceSecure();
+    if(isDeviceSecure){
+      try{
+        String signedData = await SimpleSigningPlugin.signData(data);
+        var result = await _channel.invokeMethod('editData', {'key':key, 'data': signedData});
+        if(result == true){
+          return true;
+        }else{
+          return false;
+        }
+      }on PlatformException {
+        return false;
+      }
+    }
+    return false;
+  }
 
 
 }

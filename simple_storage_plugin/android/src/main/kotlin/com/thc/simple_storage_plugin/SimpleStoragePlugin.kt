@@ -2,6 +2,7 @@ package com.thc.simple_storage_plugin
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
@@ -9,10 +10,13 @@ import android.widget.Toast
 import androidx.annotation.NonNull
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.common.PluginRegistry
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -20,7 +24,7 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 
 /** SimpleStoragePlugin */
-class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler{
+class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener{
   private lateinit var channel : MethodChannel
   private lateinit var context: Context
   private lateinit var activity: Activity
@@ -30,6 +34,7 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler{
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "simple_storage_plugin")
     channel.setMethodCallHandler(this)
+    context = flutterPluginBinding.applicationContext
 
     if (!checkAESKeyExists()) {
       createAESKey()
@@ -39,34 +44,42 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler{
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "writeData"){
       val key = call.argument<String>("key")
-      val dataToWrite = call.argument<String>("dataToWrite")
+      val dataToWrite = call.argument<String>("data")
       if (key != null && dataToWrite != null) {
         writeData(key, dataToWrite)
-        result.success("Data successfully saved")
+        result.success(true)
+      }else{
+        result.success(false)
       }
     }
-    if (call.method == "readData"){
+    else if (call.method == "readData"){
       val key = call.argument<String>("key")
       if(key != null){
         val userData = readData(key)
         if(userData != false){
           result.success(userData)
+        }else{
+          result.success(false)
         }
       }
     }
-    if (call.method == "deleteData"){
+    else if (call.method == "deleteData"){
       val key = call.argument<String>("key")
       if (key != null) {
         deleteData(key)
-        result.success("Data successfully deleted")
+        result.success(true)
+      }else{
+        result.success(false)
       }
     }
-    if (call.method == "editData"){
+    else if (call.method == "editData"){
       val key = call.argument<String>("key")
-      val dataToWrite = call.argument<String>("dataToWrite")
+      val dataToWrite = call.argument<String>("data")
       if (key != null && dataToWrite != null) {
         editData(key, dataToWrite)
-        result.success("Data successfully edited")
+        result.success(true)
+      }else{
+        result.success(false)
       }
     }
     else {
@@ -95,14 +108,12 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler{
     val sharedPref = activity.getPreferences(Context.MODE_PRIVATE)
     val textToRead : String? = sharedPref.getString(key, null)
     if(textToRead.isNullOrEmpty()){
-      Toast.makeText(context, "Text to read cannot be null!", Toast.LENGTH_LONG).show()
+      Toast.makeText(context, "No such key in storage!", Toast.LENGTH_LONG).show()
       return false
     }else{
       val userData = decrypt(textToRead)
       if(userData != null){
-        if (verifyData(userData)) {
-          return userData.subSequence(userData.indexOf(":")+1, userData.length).toString()
-        }
+        return userData
       }
       Toast.makeText(context, "Signature not valid!", Toast.LENGTH_LONG).show()
       return false
@@ -173,7 +184,7 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler{
       val ivSpec = IvParameterSpec(Base64.decode(ivString, Base64.DEFAULT))
       val cipher = Cipher.getInstance("AES/CBC/PKCS7Padding")
 
-      cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec);
+      cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
       return  String(cipher.doFinal(Base64.decode(encodedData, Base64.DEFAULT)))
     }catch (e: Exception) {
     }
@@ -205,6 +216,27 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler{
     //We get the aes key from the keystore if they exists
     val secretKey = keyStore.getKey(ANDROID_AES_ALIAS, null) as SecretKey?
     return secretKey != null
+  }
+
+  override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+    activity = binding.activity
+    binding.addActivityResultListener(this)
+  }
+
+  override fun onDetachedFromActivityForConfigChanges() {
+    TODO("Not yet implemented")
+  }
+
+  override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+    TODO("Not yet implemented")
+  }
+
+  override fun onDetachedFromActivity() {
+    TODO("Not yet implemented")
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    return true
   }
 }
 //KEYSTORE NAME
