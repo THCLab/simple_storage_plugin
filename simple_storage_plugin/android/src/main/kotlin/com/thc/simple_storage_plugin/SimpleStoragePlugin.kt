@@ -108,7 +108,6 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler, ActivityAware, Plug
     val sharedPref = activity.getPreferences(Context.MODE_PRIVATE)
     val textToRead : String? = sharedPref.getString(key, null)
     if(textToRead.isNullOrEmpty()){
-      Toast.makeText(context, "No such key in storage!", Toast.LENGTH_LONG).show()
       return false
     }else{
       val userData = decrypt(textToRead)
