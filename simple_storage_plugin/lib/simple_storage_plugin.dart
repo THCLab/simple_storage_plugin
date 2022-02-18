@@ -16,7 +16,7 @@ class SimpleStoragePlugin {
         if(result == true){
           return true;
         }else{
-          return false;
+          throw SharedPreferencesException('Writing to shared preferences failed. Consider reopening or reinstalling the app.');
         }
       }on PlatformException{
         return false;
@@ -54,7 +54,7 @@ class SimpleStoragePlugin {
         if(result != false){
           return true;
         }else{
-          return false;
+          throw SharedPreferencesException('Writing to shared preferences failed. Consider reopening or reinstalling the app.');
         }
       }on PlatformException {
         return false;
@@ -72,7 +72,7 @@ class SimpleStoragePlugin {
         if(result == true){
           return true;
         }else{
-          return false;
+          throw SharedPreferencesException('Writing to shared preferences failed. Consider reopening or reinstalling the app.');
         }
       }on PlatformException {
         return false;
