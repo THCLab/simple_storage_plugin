@@ -19,3 +19,9 @@ class InvalidSignatureException implements Exception{
   String toString() => "InvalidSignatureException: $cause";
 }
 
+class SharedPreferencesException implements Exception{
+  String cause;
+  SharedPreferencesException(this.cause);
+  @override
+  String toString() => "SharedPreferencesException: $cause";
+}

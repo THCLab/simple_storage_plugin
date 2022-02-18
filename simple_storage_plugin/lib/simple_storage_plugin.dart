@@ -11,7 +11,7 @@ class SimpleStoragePlugin {
     bool isDeviceSecure = await SimpleSigningPlugin.checkIfDeviceSecure();
     if(isDeviceSecure){
       try{
-        String signedData = await SimpleSigningPlugin.signData(data);
+        var signedData = await SimpleSigningPlugin.signData(data);
         var result = await _channel.invokeMethod('writeData', {'key':key, 'data': signedData});
         if(result == true){
           return true;

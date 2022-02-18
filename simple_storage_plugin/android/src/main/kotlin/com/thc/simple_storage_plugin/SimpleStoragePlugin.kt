@@ -114,7 +114,6 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler, ActivityAware, Plug
       if(userData != null){
         return userData
       }
-      Toast.makeText(context, "Signature not valid!", Toast.LENGTH_LONG).show()
       return false
     }
   }
@@ -161,7 +160,6 @@ class SimpleStoragePlugin: FlutterPlugin, MethodCallHandler, ActivityAware, Plug
       val ivString = Base64.encodeToString(iv, Base64.DEFAULT)
       result += Base64.encodeToString(cipher.doFinal(strToEncrypt.toByteArray(Charsets.UTF_8)), Base64.DEFAULT)
       result += IV_SEPARATOR + ivString
-      println(result)
       return result
     }
     catch (e: Exception) {
