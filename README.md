@@ -13,24 +13,24 @@ This plugin contains following methods:
 //Writing data example
 String _data = 'Data';
 String _key = 'Key';
-var result = await SimpleStoragePlugin.writeData(key, data); //returns true or false on PlatformException. Can throw a SharedPreferencesException or DeviceNotSecuredException
+var result = await SimpleStoragePlugin.writeData(key, data); //returns true if everything goes fine. Can throw a SharedPreferencesException or DeviceNotSecuredException
 ```
 
 ```dart
 //Reading data example
 String _key = 'Key';
-var result = await SimpleStoragePlugin.readData(readKeyController.text); //returns true or false on PlatformException. Can throw a InvalidSignatureException, DeviceNotSecuredException or NoKeyInStorageException
+var result = await SimpleStoragePlugin.readData(readKeyController.text); //returns data written under key if everything goes fine. Can throw a InvalidSignatureException, DeviceNotSecuredException or NoKeyInStorageException
 ```
 
 ```dart
 //Deleting data example
 String _key = 'Key';
-var result = await SimpleStoragePlugin.deleteData(readKeyController.text); //returns true or false on PlatformException. Can throw a SharedPreferencesException or DeviceNotSecuredException
+var result = await SimpleStoragePlugin.deleteData(readKeyController.text); //returns true if everything goes fine. Can throw a SharedPreferencesException or DeviceNotSecuredException
 ```
 
 ```dart
 //Editing data example
 String _data = 'Data';
 String _key = 'Key';
-var result = await SimpleStoragePlugin.editData(key, data); //returns true or false on PlatformException. Can throw a SharedPreferencesException or DeviceNotSecuredException
+var result = await SimpleStoragePlugin.editData(key, data); //returns true if everything goes fine. Can throw a SharedPreferencesException or DeviceNotSecuredException
 ```
