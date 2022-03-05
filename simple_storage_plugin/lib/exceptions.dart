@@ -1,26 +1,42 @@
+///An exception thrown when there is no such key saved under shared preferences
 class NoKeyInStorageException implements Exception {
+  ///The description for the exception.
   String cause;
+
+  ///Exception constructor containing the description for the exception.
   NoKeyInStorageException(this.cause);
   @override
   String toString() => "NoKeyInStorageException: $cause";
 }
 
-class DeviceNotSecuredException implements Exception{
+///An exception thrown when there is no secure screen lock set on the device.
+class DeviceNotSecuredException implements Exception {
+  ///The description for the exception.
   String cause;
+
+  ///Exception constructor containing the description for the exception.
   DeviceNotSecuredException(this.cause);
   @override
   String toString() => "DeviceNotSecuredException: $cause";
 }
 
-class InvalidSignatureException implements Exception{
+///An exception thrown when the data signature is invalid.
+class InvalidSignatureException implements Exception {
+  ///The description for the exception.
   String cause;
+
+  ///Exception constructor containing the description for the exception.
   InvalidSignatureException(this.cause);
   @override
   String toString() => "InvalidSignatureException: $cause";
 }
 
-class SharedPreferencesException implements Exception{
+///An exception thrown when there is an error in shared preferences.
+class SharedPreferencesException implements Exception {
+  ///The description for the exception.
   String cause;
+
+  ///Exception constructor containing the description for the exception.
   SharedPreferencesException(this.cause);
   @override
   String toString() => "SharedPreferencesException: $cause";
