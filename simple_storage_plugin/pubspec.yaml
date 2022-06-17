@@ -1,7 +1,7 @@
 name: simple_storage_plugin
 description: A plugin for storing data using shared preferences in Android. Stored data is encrypted using AES.
 repository: https://github.com/THCLab/simple_storage_plugin
-version: 0.0.1
+version: 0.0.2
 
 environment:
   sdk: ">=2.15.1 <3.0.0"
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  simple_signing_plugin: ^0.0.3
+  simple_signing_plugin: ^0.0.4
 
 dev_dependencies:
   flutter_test:
